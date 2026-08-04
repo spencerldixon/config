@@ -1,0 +1,15 @@
+---
+- name: Check for scm_breeze
+  ansible.builtin.stat:
+    path: "{{ ansible_env.HOME }}/.scm_breeze"
+  register: scm_breeze_dir
+
+- name: Clone scm_breeze
+  ansible.builtin.git:
+    repo: https://github.com/ndbroadbent/scm_breeze.git
+    dest: "{{ ansible_env.HOME }}/.scm_breeze"
+  when: not scm_breeze_dir.stat.exists
+
+- name: Run scm_breeze installer
+  ansible.builtin.command: "{{ ansible_env.HOME }}/.scm_breeze/install.sh"
+  when: not scm_breeze_dir.stat.exists

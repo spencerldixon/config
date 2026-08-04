@@ -1,0 +1,35 @@
+---
+- name: Set git user.name
+  community.general.git_config:
+    name: user.name
+    scope: global
+    value: "Spencer Dixon"
+
+- name: Set git user.email
+  community.general.git_config:
+    name: user.email
+    scope: global
+    value: "spencerlloyddixon@gmail.com"
+
+- name: Set git core.editor
+  community.general.git_config:
+    name: core.editor
+    scope: global
+    value: "nvim"
+
+- name: Set git push.default
+  community.general.git_config:
+    name: push.default
+    scope: global
+    value: "simple"
+
+- name: Copy global gitignore
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/files/gitignore_global"
+    dest: "{{ ansible_env.HOME }}/.gitignore_global"
+
+- name: Set git core.excludesfile
+  community.general.git_config:
+    name: core.excludesfile
+    scope: global
+    value: "{{ ansible_env.HOME }}/.gitignore_global"

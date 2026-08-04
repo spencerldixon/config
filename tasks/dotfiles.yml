@@ -1,0 +1,27 @@
+---
+- name: Check for dotfiles repo
+  ansible.builtin.stat:
+    path: "{{ ansible_env.HOME }}/dotfiles"
+  register: dotfiles_dir
+
+- name: Clone dotfiles repo (with submodules)
+  ansible.builtin.git:
+    repo: https://github.com/spencerldixon/dotfiles.git
+    dest: "{{ ansible_env.HOME }}/dotfiles"
+    recursive: true
+  when: not dotfiles_dir.stat.exists
+
+- name: Stow dotfiles packages
+  ansible.builtin.command:
+    cmd: stow git nvim oh_my_zsh tmux zsh
+    chdir: "{{ ansible_env.HOME }}/dotfiles"
+  when: not dotfiles_dir.stat.exists
+
+- name: Check for lazy.nvim
+  ansible.builtin.stat:
+    path: "{{ ansible_env.HOME }}/.local/share/nvim/lazy/lazy.nvim"
+  register: lazy_nvim
+
+- name: Install + sync neovim plugins via lazy.nvim
+  ansible.builtin.command: nvim --headless "+Lazy! sync" +qa
+  when: not lazy_nvim.stat.exists

@@ -1,0 +1,99 @@
+---
+# macOS hardening, based on https://github.com/drduh/OS-X-Security-and-Privacy-Guide
+
+- name: Destroy FileVault key on standby + hibernate to disk
+  become: true
+  ansible.builtin.command: "{{ item }}"
+  loop:
+    - pmset -a destroyfvkeyonstandby 1
+    - pmset -a hibernatemode 25
+  changed_when: true
+
+- name: Check FileVault status
+  ansible.builtin.command: fdesetup status
+  register: filevault_status
+  changed_when: false
+
+- name: Warn if FileVault is off
+  ansible.builtin.debug:
+    msg: "FileVault is OFF. Enable manually (System Settings > Privacy & Security) — not automated, needs a recovery key handled interactively."
+  when: "'FileVault is On' not in filevault_status.stdout"
+
+- name: Enable firewall, logging, stealth mode, disallow signed software bypass
+  become: true
+  community.general.osx_defaults:
+    domain: /Library/Preferences/com.apple.alf
+    key: "{{ item.key }}"
+    type: bool
+    value: "{{ item.value }}"
+  loop:
+    - { key: globalstate, value: true }
+    - { key: loggingenabled, value: true }
+    - { key: stealthenabled, value: true }
+    - { key: allowsignedenabled, value: false }
+
+- name: Disable captive portal (avoids MITM via fake wifi login pages)
+  become: true
+  community.general.osx_defaults:
+    domain: /Library/Preferences/SystemConfiguration/com.apple.captive.control
+    key: Active
+    type: bool
+    value: false
+
+- name: Disable guest account
+  become: true
+  community.general.osx_defaults:
+    domain: /Library/Preferences/com.apple.loginwindow
+    key: GuestEnabled
+    type: bool
+    value: false
+
+- name: Require password immediately after sleep/screensaver
+  community.general.osx_defaults:
+    domain: com.apple.screensaver
+    key: "{{ item.key }}"
+    type: int
+    value: "{{ item.value }}"
+  loop:
+    - { key: askForPassword, value: 1 }
+    - { key: askForPasswordDelay, value: 0 }
+
+- name: Enable Gatekeeper
+  become: true
+  ansible.builtin.command: spctl --master-enable
+  changed_when: true
+
+- name: Disable remote login (SSH)
+  become: true
+  ansible.builtin.command: systemsetup -setremotelogin off
+  changed_when: true
+
+- name: Disable remote Apple events
+  become: true
+  ansible.builtin.command: systemsetup -setremoteappleevents off
+  changed_when: true
+
+- name: Disable Bonjour multicast advertising
+  become: true
+  community.general.osx_defaults:
+    domain: /Library/Preferences/com.apple.mDNSResponder
+    key: NoMulticastAdvertisements
+    type: bool
+    value: true
+
+- name: Enable automatic security updates
+  become: true
+  community.general.osx_defaults:
+    domain: /Library/Preferences/com.apple.SoftwareUpdate
+    key: "{{ item }}"
+    type: bool
+    value: true
+  loop:
+    - AutomaticallyInstallMacOSUpdates
+    - ConfigDataInstall
+    - CriticalUpdateInstall
+
+- name: Turn on scheduled software update checks
+  become: true
+  ansible.builtin.command: softwareupdate --schedule on
+  changed_when: true

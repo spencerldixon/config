@@ -1,0 +1,17 @@
+---
+# Enterprise policy hardening + forced extensions, see
+# https://github.com/mozilla/policy-templates/blob/master/docs/index.md
+
+- name: Ensure Firefox distribution directory exists
+  ansible.builtin.file:
+    path: /Applications/Firefox.app/Contents/Resources/distribution
+    state: directory
+
+- name: Install Firefox policies.json (hardening + extensions)
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/files/firefox-policies.json"
+    dest: /Applications/Firefox.app/Contents/Resources/distribution/policies.json
+
+- name: Note that Firefox self-updates wipe policies.json
+  ansible.builtin.debug:
+    msg: "policies.json lives inside the Firefox.app bundle. Firefox self-updates replace the whole bundle and wipe it — re-run `ansible-playbook playbook.yml --tags firefox` after an update to reapply."

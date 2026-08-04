@@ -1,0 +1,21 @@
+---
+- name: Install zsh + zsh-completions
+  community.general.homebrew:
+    name:
+      - zsh
+      - zsh-completions
+    state: present
+
+- name: Check for oh-my-zsh
+  ansible.builtin.stat:
+    path: "{{ ansible_env.HOME }}/.oh-my-zsh"
+  register: oh_my_zsh_dir
+
+- name: Install oh-my-zsh
+  ansible.builtin.shell: curl -L https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh | sh
+  when: not oh_my_zsh_dir.stat.exists
+
+- name: Set zsh as default shell
+  become: true
+  ansible.builtin.command: chsh -s /bin/zsh {{ ansible_env.USER }}
+  when: not oh_my_zsh_dir.stat.exists

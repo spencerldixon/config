@@ -1,0 +1,29 @@
+---
+- name: Set dock icon size
+  community.general.osx_defaults:
+    domain: com.apple.dock
+    key: tilesize
+    type: int
+    value: 41
+  notify: Restart Dock
+
+- name: Set key repeat rate
+  community.general.osx_defaults:
+    domain: NSGlobalDomain
+    key: KeyRepeat
+    type: int
+    value: 2
+
+- name: Set initial key repeat delay
+  community.general.osx_defaults:
+    domain: NSGlobalDomain
+    key: InitialKeyRepeat
+    type: int
+    value: 15
+
+- name: Enable dark mode
+  community.general.osx_defaults:
+    domain: NSGlobalDomain
+    key: AppleInterfaceStyle
+    type: string
+    value: Dark

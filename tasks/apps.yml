@@ -1,0 +1,14 @@
+---
+- name: Install GUI apps (casks)
+  community.general.homebrew_cask:
+    name:
+      - firefox
+      - slack
+      - spotify
+      - rectangle
+      - transmission
+      - vlc
+      - tor-browser
+      - notion
+      - anki
+    state: present

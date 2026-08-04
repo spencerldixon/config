@@ -1,0 +1,13 @@
+---
+- name: Security hardening
+  hosts: local
+  become: false
+
+  tasks:
+    - name: macOS hardening
+      ansible.builtin.include_tasks: tasks/security.yml
+      tags: security
+
+    - name: Firefox hardening and extensions
+      ansible.builtin.include_tasks: tasks/firefox.yml
+      tags: firefox

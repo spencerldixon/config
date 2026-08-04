@@ -1,0 +1,33 @@
+---
+- name: Configure MacBook
+  hosts: local
+  become: false
+
+  tasks:
+    - name: Xcode CLI tools
+      ansible.builtin.include_tasks: tasks/xcode.yml
+      tags: xcode
+
+    - name: Install Homebrew and packages
+      ansible.builtin.include_tasks: tasks/homebrew.yml
+      tags: homebrew
+
+    - name: GUI apps (casks)
+      ansible.builtin.include_tasks: tasks/apps.yml
+      tags: apps
+
+    - name: Git config
+      ansible.builtin.include_tasks: tasks/git.yml
+      tags: git
+
+    - name: Dotfiles
+      ansible.builtin.include_tasks: tasks/dotfiles.yml
+      tags: dotfiles
+
+    - name: zsh + oh-my-zsh
+      ansible.builtin.include_tasks: tasks/zsh.yml
+      tags: zsh
+
+    - name: scm_breeze
+      ansible.builtin.include_tasks: tasks/scm_breeze.yml
+      tags: scm_breeze

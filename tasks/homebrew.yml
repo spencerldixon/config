@@ -1,0 +1,25 @@
+---
+- name: Check for Homebrew
+  ansible.builtin.stat:
+    path: /opt/homebrew
+  register: homebrew_installed
+
+- name: Install Homebrew
+  ansible.builtin.shell: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  when: not homebrew_installed.stat.exists
+
+- name: Install essential packages
+  community.general.homebrew:
+    name:
+      - mise
+      - git
+      - neovim
+      - stow
+      - tmux
+      - openssl
+      - wget
+      - ghostty
+      - docker
+      - gh
+    state: present
+    update_homebrew: true

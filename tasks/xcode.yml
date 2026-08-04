@@ -1,0 +1,17 @@
+---
+- name: Check for Xcode CLI tools
+  ansible.builtin.stat:
+    path: /Library/Developer/CommandLineTools
+  register: xcode_cli_tools
+
+- name: Install Xcode CLI tools
+  ansible.builtin.command: xcode-select --install
+  when: not xcode_cli_tools.stat.exists
+
+- name: Wait for Xcode CLI tools install to finish
+  ansible.builtin.command: xcode-select -p
+  register: xcode_check
+  until: xcode_check.rc == 0
+  retries: 30
+  delay: 10
+  when: not xcode_cli_tools.stat.exists

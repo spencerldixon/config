@@ -1,0 +1,39 @@
+# Mac OS X hidden files
+*.DS_Store
+*.DS_Store?
+.AppleDouble
+.LSOverride
+Icon?
+.Trashes
+.Spotlight-V100
+.fseventsd
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Vim files
+.*.sw?
+*~
+
+# Editors / IDEs
+.idea/
+.vscode/
+*.sublime-workspace
+*.sublime-project
+#*#
+.#*
+
+# Logs and databases #
+*.log
+*.sql
+*.sqlite
+
+# Thumbnails
+._*
+
+# Env
+.env
+.env.local
