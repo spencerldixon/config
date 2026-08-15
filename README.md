@@ -16,17 +16,17 @@ config/
   security.yml             - hardening playbook (macOS + Firefox)
   files/
     gitignore_global        - global gitignore, copied to ~/.gitignore_global
-    firefox-policies.json    - Firefox enterprise policy (hardening + forced extensions), copied into Firefox.app
+    firefox-policies.json    - Firefox enterprise policy (hardening, minimal Home screen, GPC, and managed extensions)
   tasks/
     xcode.yml               - installs Xcode command line tools, accepts license
     homebrew.yml             - installs Homebrew + core CLI packages (mise, git, neovim, stow, tmux, openssl, wget, ghostty, docker, gh)
     apps.yml                  - installs GUI apps via Homebrew cask (firefox, slack, spotify, rectangle, transmission, vlc, tor-browser, notion, anki)
-    git.yml                    - sets global git config (user, email, editor, push default, global gitignore)
+    git.yml                    - sets global git config (user, email, editor, push/default branch behaviour, global gitignore)
     dotfiles.yml                - clones dotfiles repo, stows packages, bootstraps neovim plugins via lazy.nvim
     zsh.yml                      - installs zsh + oh-my-zsh, sets as default shell
     scm_breeze.yml                 - clones + installs scm_breeze
     security.yml                    - macOS hardening (FileVault, firewall, Gatekeeper, SSH, guest account, etc), based on drduh's OS X Security and Privacy Guide
-    firefox.yml                      - installs policies.json (telemetry off, tracking protection, forced extensions: uBlock Origin, Privacy Badger, LastPass, Instapaper, FoxyProxy, Facebook/Google Container)
+    firefox.yml                      - loads hardening, minimal Home screen, GPC, and extension policy into the org.mozilla.firefox preference domain — survives Firefox self-updates
     osx.yml                           - cosmetic macOS defaults (dock size, key repeat, dark mode) — not wired into either playbook yet
 ```
 
@@ -79,4 +79,4 @@ ansible-playbook security.yml --tags firefox
   ```sh
   ansible-playbook development.yml --tags xcode --ask-become-pass
   ```
-- `firefox-policies.json` lives inside the `Firefox.app` bundle once copied there. Firefox self-updates replace the whole bundle and wipe it — re-run `ansible-playbook security.yml --tags firefox` after a Firefox update.
+- `firefox.yml` merges `files/firefox-policies.json` into the `org.mozilla.firefox` preference domain, preserving unrelated values. It only runs the import when managed policy values differ and survives Firefox self-updates.

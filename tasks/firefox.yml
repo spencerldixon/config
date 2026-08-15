@@ -1,17 +1,65 @@
 ---
-# Enterprise policy hardening + forced extensions, see
-# https://github.com/mozilla/policy-templates/blob/master/docs/index.md
+# Enterprise policy hardening + managed extensions, loaded into the macOS
+# org.mozilla.firefox preference domain instead of Firefox.app/.../distribution/policies.json
+# — the app bundle gets replaced whole on every Firefox self-update, wiping a
+# policies.json dropped there. The preference domain lives outside the bundle
+# and survives updates. See https://github.com/mozilla/policy-templates/blob/master/mac/README.md
 
-- name: Ensure Firefox distribution directory exists
+- name: Remove stale policies.json from Firefox.app bundle
   ansible.builtin.file:
-    path: /Applications/Firefox.app/Contents/Resources/distribution
-    state: directory
+    path: /Applications/Firefox.app/Contents/Resources/distribution/policies.json
+    state: absent
 
-- name: Install Firefox policies.json (hardening + extensions)
-  ansible.builtin.copy:
-    src: "{{ playbook_dir }}/files/firefox-policies.json"
-    dest: /Applications/Firefox.app/Contents/Resources/distribution/policies.json
+- name: Create temp file for Firefox policy plist
+  ansible.builtin.tempfile:
+    suffix: .plist
+  register: firefox_policy_plist
 
-- name: Note that Firefox self-updates wipe policies.json
-  ansible.builtin.debug:
-    msg: "policies.json lives inside the Firefox.app bundle. Firefox self-updates replace the whole bundle and wipe it — re-run `ansible-playbook playbook.yml --tags firefox` after an update to reapply."
+- name: Prepare and load Firefox policy plist
+  block:
+    - name: Build Firefox policy plist without replacing unrelated preferences
+      ansible.builtin.command:
+        argv:
+          - python3
+          - -c
+          - |-
+            import json
+            import plistlib
+            import subprocess
+
+            exported = subprocess.run(
+                ["defaults", "export", "org.mozilla.firefox", "-"],
+                capture_output=True,
+                check=False,
+            )
+            current = (
+                plistlib.loads(exported.stdout)
+                if exported.returncode == 0
+                else {}
+            )
+            with open("{{ playbook_dir }}/files/firefox-policies.json") as source:
+                desired = json.load(source)["policies"]
+            desired["EnterprisePoliciesEnabled"] = True
+
+            changed = any(current.get(key) != value for key, value in desired.items())
+            current.update(desired)
+            with open("{{ firefox_policy_plist.path }}", "wb") as destination:
+                plistlib.dump(current, destination)
+            print("changed" if changed else "unchanged")
+      register: firefox_policy_plist_build
+      changed_when: false
+
+    - name: Load Firefox hardening + extension policy
+      ansible.builtin.command:
+        argv:
+          - defaults
+          - import
+          - org.mozilla.firefox
+          - "{{ firefox_policy_plist.path }}"
+      when: firefox_policy_plist_build.stdout == "changed"
+      changed_when: true
+  always:
+    - name: Remove temp Firefox policy plist
+      ansible.builtin.file:
+        path: "{{ firefox_policy_plist.path }}"
+        state: absent

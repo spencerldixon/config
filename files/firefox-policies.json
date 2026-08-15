@@ -17,6 +17,52 @@
       "Locked": true,
       "Category": "strict"
     },
+    "Preferences": {
+      "browser.newtabpage.activity-stream.showSearch": {
+        "Value": true,
+        "Status": "locked"
+      },
+      "browser.newtabpage.activity-stream.logowordmark.alwaysVisible": {
+        "Value": true,
+        "Status": "locked"
+      },
+      "browser.newtabpage.activity-stream.showWeather": {
+        "Value": false,
+        "Status": "locked"
+      },
+      "browser.newtabpage.activity-stream.trendingSearch.enabled": {
+        "Value": false,
+        "Status": "locked"
+      },
+      "browser.newtabpage.activity-stream.feeds.topsites": {
+        "Value": false,
+        "Status": "locked"
+      },
+      "browser.newtabpage.activity-stream.feeds.section.topstories": {
+        "Value": false,
+        "Status": "locked"
+      },
+      "browser.newtabpage.activity-stream.showSponsoredCheckboxes": {
+        "Value": false,
+        "Status": "locked"
+      },
+      "browser.newtabpage.activity-stream.showSponsoredTopSites": {
+        "Value": false,
+        "Status": "locked"
+      },
+      "browser.newtabpage.activity-stream.showSponsored": {
+        "Value": false,
+        "Status": "locked"
+      },
+      "browser.newtabpage.activity-stream.feeds.section.highlights": {
+        "Value": false,
+        "Status": "locked"
+      },
+      "privacy.globalprivacycontrol.enabled": {
+        "Value": true,
+        "Status": "locked"
+      }
+    },
     "ExtensionSettings": {
       "uBlock0@raymondhill.net": {
         "installation_mode": "normal_installed",

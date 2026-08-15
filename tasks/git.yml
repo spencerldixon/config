@@ -23,6 +23,12 @@
     scope: global
     value: "simple"
 
+- name: Set git init.defaultBranch
+  community.general.git_config:
+    name: init.defaultBranch
+    scope: global
+    value: "main"
+
 - name: Copy global gitignore
   ansible.builtin.copy:
     src: "{{ playbook_dir }}/files/gitignore_global"
