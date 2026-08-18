@@ -1,3 +1,45 @@
 ---
-- import_playbook: development.yml
-- import_playbook: security.yml
+- name: Configure MacBook
+  hosts: local
+  become: false
+
+  tasks:
+    - name: Install Xcode CLI tools
+      ansible.builtin.include_tasks: tasks/xcode.yml
+      tags: xcode
+
+    - name: Install Homebrew and packages
+      ansible.builtin.include_tasks: tasks/homebrew.yml
+      tags: homebrew
+
+    - name: Install mac apps 
+      ansible.builtin.include_tasks: tasks/apps.yml
+      tags: apps
+
+    - name: Git config 
+      ansible.builtin.include_tasks: tasks/git.yml
+      tags: git
+
+    - name: MacOS hardening
+      ansible.builtin.include_tasks: tasks/security.yml
+      tags: security
+
+    - name: Firefox config
+      ansible.builtin.include_tasks: tasks/firefox.yml
+      tags: firefox
+
+    - name: Install dotfiles
+      ansible.builtin.include_tasks: tasks/dotfiles.yml
+      tags: dotfiles
+
+    - name: Install Zsh and oh-my-zsh
+      ansible.builtin.include_tasks: tasks/zsh.yml
+      tags: zsh
+
+    - name: Install scm_breeze
+      ansible.builtin.include_tasks: tasks/scm_breeze.yml
+      tags: scm_breeze
+
+    - name: Configure Mac OSX preferences
+      ansible.builtin.include_tasks: tasks/osx.yml
+      tags: osx
