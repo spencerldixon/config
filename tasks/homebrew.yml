@@ -21,5 +21,7 @@
       - ghostty
       - docker
       - gh
+      - 1password-cli
+      - dockutil
     state: present
     update_homebrew: true

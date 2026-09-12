@@ -1,0 +1,27 @@
+---
+- name: Remove all dock items
+  ansible.builtin.command: dockutil --remove all --no-restart
+  changed_when: true
+
+- name: Add dock apps
+  ansible.builtin.command: dockutil --add "{{ item }}" --no-restart
+  loop:
+    - /System/Library/CoreServices/Finder.app
+    - /Applications/Firefox.app
+    - /Applications/Tor Browser.app
+    - /Applications/Slack.app
+    - /System/Applications/Calendar.app
+    - /System/Applications/Reminders.app
+    - /Applications/Anki.app
+    - /System/Applications/Notes.app
+    - /Applications/Notion.app
+    - /Applications/Ghostty.app
+    - /System/Applications/System Settings.app
+    - /Applications/1Password.app
+    - /Applications/Spotify.app
+    - /Applications/Launchpad.app
+  changed_when: true
+
+- name: Restart Dock
+  ansible.builtin.command: killall Dock
+  changed_when: false

@@ -43,3 +43,7 @@
     - name: Configure Mac OSX preferences
       ansible.builtin.include_tasks: tasks/osx.yml
       tags: osx
+
+    - name: Configure dock
+      ansible.builtin.include_tasks: tasks/dock.yml
+      tags: dock

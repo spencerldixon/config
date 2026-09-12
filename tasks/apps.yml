@@ -4,6 +4,7 @@
     name:
       - firefox
       - slack
+      - 1password
       - spotify
       - rectangle
       - transmission
@@ -11,4 +12,5 @@
       - tor-browser
       - notion
       - anki
+      - tailscale
     state: present
