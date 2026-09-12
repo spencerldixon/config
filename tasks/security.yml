@@ -31,6 +31,7 @@
     - { key: loggingenabled, value: true }
     - { key: stealthenabled, value: true }
     - { key: allowsignedenabled, value: false }
+    - { key: allowdownloadsignedenabled, value: false }
 
 - name: Disable captive portal (avoids MITM via fake wifi login pages)
   become: true
@@ -89,6 +90,8 @@
     type: bool
     value: true
   loop:
+    - AutomaticCheckEnabled
+    - AutomaticDownload
     - AutomaticallyInstallMacOSUpdates
     - ConfigDataInstall
     - CriticalUpdateInstall
@@ -96,4 +99,63 @@
 - name: Turn on scheduled software update checks
   become: true
   ansible.builtin.command: softwareupdate --schedule on
+  changed_when: true
+
+- name: Disable Screen Sharing / Remote Management (ARD)
+  become: true
+  ansible.builtin.command: /System/Library/CoreServices/RemoteManagement/ARDAgent.app/Contents/Resources/kickstart -deactivate -stop
+  changed_when: true
+
+- name: Disable Screen Sharing launchd service
+  become: true
+  ansible.builtin.command: launchctl disable system/com.apple.screensharing
+  changed_when: true
+
+- name: Check for firmwarepasswd binary (Intel Macs only)
+  ansible.builtin.stat:
+    path: /usr/sbin/firmwarepasswd
+  register: firmwarepasswd_bin
+
+- name: Check firmware password status
+  become: true
+  ansible.builtin.command: /usr/sbin/firmwarepasswd -check
+  register: firmware_password_status
+  changed_when: false
+  when: firmwarepasswd_bin.stat.exists
+
+- name: Warn if firmware password is off (Intel)
+  ansible.builtin.debug:
+    msg: "Firmware password is OFF. Enable manually with 'sudo firmwarepasswd -setpasswd' — needs interactive password entry."
+  when: firmwarepasswd_bin.stat.exists and "'Password Enabled: Yes' not in firmware_password_status.stdout"
+
+- name: Note firmware password equivalent on Apple Silicon
+  ansible.builtin.debug:
+    msg: "No firmwarepasswd binary (Apple Silicon Mac). Equivalent protection is an Owner/firmware password via Startup Security Utility in recoveryOS (hold power button at boot) — not automatable."
+  when: not firmwarepasswd_bin.stat.exists
+
+- name: Enable Secure Keyboard Entry in Terminal.app
+  community.general.osx_defaults:
+    domain: com.apple.Terminal
+    key: SecureKeyboardEntry
+    type: bool
+    value: true
+
+- name: Disable sending diagnostic & usage data to Apple
+  become: true
+  ansible.builtin.command: "{{ item }}"
+  loop:
+    - defaults write /Library/Application\ Support/CrashReporter/DiagnosticMessagesHistory.plist AutoSubmit -bool false
+    - defaults write /Library/Application\ Support/CrashReporter/DiagnosticMessagesHistory.plist AutoSubmitVersion -int 4
+  changed_when: true
+
+- name: Get active network services
+  ansible.builtin.shell: networksetup -listallnetworkservices | tail -n +2 | grep -v '^\*'
+  register: network_services
+  changed_when: false
+  failed_when: network_services.rc not in [0, 1]
+
+- name: Set encrypted-friendly system DNS resolvers (Cloudflare)
+  become: true
+  ansible.builtin.command: networksetup -setdnsservers "{{ item }}" 1.1.1.1 1.0.0.1
+  loop: "{{ network_services.stdout_lines }}"
   changed_when: true
