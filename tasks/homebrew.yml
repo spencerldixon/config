@@ -18,10 +18,42 @@
       - tmux
       - openssl
       - wget
-      - ghostty
-      - docker
       - gh
       - 1password-cli
       - dockutil
+      # nvim-treesitter needs the CLI; the tree-sitter library is insufficient.
+      # The C compiler and make come from tasks/xcode.yml.
+      - tree-sitter-cli
+      # Telescope live_grep requires rg; fd accelerates file selection.
+      - ripgrep
+      - fd
+      # Zsh integrations and aliases.
+      - fzf
+      - zsh-autosuggestions
+      - direnv
+      - thefuck
+      # Claude's status line uses jq; Node provides npm for Pi and JS tools.
+      - jq
+      - node
+      # uv is called during shell startup, before mise tools may be installed.
+      - uv
+      # Dependencies for mise's Ruby source builds.
+      - readline
+      - libyaml
+      - gmp
+      - rust
+      - pkgconf
     state: present
     update_homebrew: true
+
+- name: Install dotfiles applications and icon font
+  community.general.homebrew_cask:
+    name:
+      - ghostty
+      # Desktop includes the engine, Docker CLI, and Compose plugin.
+      - docker-desktop
+      - claude-code
+      - codex
+      # Neovim enables Nerd Font icons; select this font in your terminal.
+      - font-meslo-lg-nerd-font
+    state: present
