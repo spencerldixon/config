@@ -67,8 +67,10 @@ ansible-playbook site.yml --tags xcode,homebrew --ask-become-pass
 ```
 
 `homebrew.yml` installs `tree-sitter-cli` (not just the Tree-sitter library),
-`ripgrep` and `fd` for Telescope, `fzf`, `zsh-autosuggestions`, `direnv`, and
+`ripgrep` and `fd` for Telescope, `fzf`, `zoxide`, `zsh-autosuggestions`, `direnv`, and
 `thefuck` for the shell, `jq` for Claude's status line, and Node/npm for Pi.
+The shell uses zoxide for `z` and the interactive `zi` picker. To import
+existing zsh-z directory history once, run `zoxide import --from z ~/.z`.
 macOS already supplies `curl`, `tar`, `pbcopy`, `osascript`, and the utilities
 used by the tmux status scripts. Oh My Zsh and SCM Breeze are installed by
 their own tasks; Spotify is installed by `apps.yml` for the tmux music display.

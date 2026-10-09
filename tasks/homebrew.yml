@@ -29,6 +29,7 @@
       - fd
       # Zsh integrations and aliases.
       - fzf
+      - zoxide
       - zsh-autosuggestions
       - direnv
       - thefuck
