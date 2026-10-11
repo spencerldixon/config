@@ -44,7 +44,6 @@ config/
     git.yml                 - Sets global git config (user, email, editor, push/default branch behaviour, global gitignore)
     dotfiles.yml            - Clones dotfiles repo, stows packages, bootstraps neovim plugins via lazy.nvim
     zsh.yml                 - Installs zsh and oh-my-zsh, sets as default shell
-    scm_breeze.yml          - Installs scm_breeze for git shortcuts
     security.yml            - MacOS hardening (FileVault, firewall, Gatekeeper, SSH, guest account, etc), based on drduh's OS X Security and Privacy Guide
     firefox.yml             - Configures Firefox settings with hardening and extensions (survives Firefox self-updates)
     osx.yml                 - MacOS defaults (dock size, key repeat, dark mode)
@@ -67,13 +66,15 @@ ansible-playbook site.yml --tags xcode,homebrew --ask-become-pass
 ```
 
 `homebrew.yml` installs `tree-sitter-cli` (not just the Tree-sitter library),
-`ripgrep` and `fd` for Telescope, `fzf`, `zoxide`, `zsh-autosuggestions`, `direnv`, and
-`thefuck` for the shell, `jq` for Claude's status line, and Node/npm for Pi.
+`ripgrep` and `fd` for Telescope, `fzf`, `zoxide`, `scmpuff`, `zsh-autosuggestions`,
+`direnv`, and `thefuck` for the shell, `jq` for Claude's status line, and Node/npm for Pi.
 The shell uses zoxide for `z` and the interactive `zi` picker. To import
 existing zsh-z directory history once, run `zoxide import --from z ~/.z`.
+scmpuff gives numbered git status: `gs` lists changed files, then `ga 1-3`,
+`gd 2`, or `n 4` to open file 4 in Neovim.
 macOS already supplies `curl`, `tar`, `pbcopy`, `osascript`, and the utilities
-used by the tmux status scripts. Oh My Zsh and SCM Breeze are installed by
-their own tasks; Spotify is installed by `apps.yml` for the tmux music display.
+used by the tmux status scripts. Oh My Zsh is installed by its own task;
+Spotify is installed by `apps.yml` for the tmux music display.
 
 After the dotfiles are linked, install their mise-managed Ruby, Python, uv,
 Terraform, and Yarn versions, then sync Neovim plugins and wait for parser

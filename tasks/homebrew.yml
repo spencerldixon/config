@@ -30,6 +30,7 @@
       # Zsh integrations and aliases.
       - fzf
       - zoxide
+      - scmpuff
       - zsh-autosuggestions
       - direnv
       - thefuck

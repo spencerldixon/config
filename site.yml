@@ -36,10 +36,6 @@
       ansible.builtin.include_tasks: tasks/zsh.yml
       tags: zsh
 
-    - name: Install scm_breeze
-      ansible.builtin.include_tasks: tasks/scm_breeze.yml
-      tags: scm_breeze
-
     - name: Configure Mac OSX preferences
       ansible.builtin.include_tasks: tasks/osx.yml
       tags: osx
