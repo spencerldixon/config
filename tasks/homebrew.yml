@@ -16,6 +16,7 @@
       - neovim
       - stow
       - tmux
+      - herdr
       - openssl
       - wget
       - gh
@@ -52,10 +53,22 @@
   community.general.homebrew_cask:
     name:
       - ghostty
-      # Desktop includes the engine, Docker CLI, and Compose plugin.
       - docker-desktop
+      - firefox
+      - slack
+      - 1password
+      - spotify
+      - rectangle
+      - transmission
+      - vlc
+      - tor-browser
+      - notion
+      - anki
+      - tailscale
+      - obsidian
       - claude-code
       - codex
+      - pi-coding-agent
       # Neovim enables Nerd Font icons; select this font in your terminal.
       - font-meslo-lg-nerd-font
     state: present

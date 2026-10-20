@@ -39,8 +39,7 @@ config/
     firefox-policies.json   - Firefox settings file (hardening, minimal Home screen, GPC, and managed extensions)
   tasks/
     xcode.yml               - Installs Xcode command line tools, accepts license
-    homebrew.yml            - Installs CLI tools, Treesitter/Telescope and shell prerequisites, Ruby build dependencies, Ghostty, Docker Desktop, AI CLIs, and a Nerd Font
-    apps.yml                - Installs favourite mac apps via Homebrew cask (firefox, slack, spotify, rectangle, transmission, vlc, tor-browser, notion, anki)
+    homebrew.yml            - Installs CLI tools, Treesitter/Telescope and shell prerequisites, and mac apps via homebrew.
     git.yml                 - Sets global git config (user, email, editor, push/default branch behaviour, global gitignore)
     dotfiles.yml            - Clones dotfiles repo, stows packages, bootstraps neovim plugins via lazy.nvim
     zsh.yml                 - Installs zsh and oh-my-zsh, sets as default shell
